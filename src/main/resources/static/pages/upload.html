@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>segment upload</title>
+        <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/md5.js"></script>
+        <script type="text/javascript" src="/js/tool.js"></script>
+        <script src="/js/upload.js"></script>
+    </head>
+    <body>
+        <div id="top" class="center">
+            <p id="message"></p>
+        </div>
+        <div id="upload" class="center">
+            <h1>Segment File Upload</h1>
+            <input type="file" name="filename" id="filename" onchange="checkFile()"/>
+            <input type="button" id="submit" onclick="upload()" value="submit"/>
+            <span id="output">等待中</span>
+        </div>
+        <span id="uuid">uuid_name:</span>
+        <span id="md5" style="margin-left:20px;">md5_key:</span>
+    </body>
+</html>
