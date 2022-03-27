@@ -73,6 +73,7 @@ function checkFile(){
             }
         },
         error:function(){
+            $('#output').html("check请求错误")
             console.log("check请求错误")
         }
     })
