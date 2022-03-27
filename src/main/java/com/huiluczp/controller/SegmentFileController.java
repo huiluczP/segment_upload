@@ -71,8 +71,6 @@ public class SegmentFileController {
             // 更新失败
             return new ReturnResult(false, "文件数据库记录更新失败");
 
-        // 判断是否分片齐全，齐全则合并生成究极文件
-        // 其实考虑这步会不会失败应该在数据库再加一个值，再说吧
         class deleteThread implements Runnable{
             @Override
             public void run() {
@@ -84,6 +82,8 @@ public class SegmentFileController {
             }
         }
 
+        // 判断是否分片齐全，齐全则合并生成究极文件
+        // 其实考虑这步会不会失败应该在数据库再加一个值，再说吧
         if(segmentIndex==segmentFile.getSegmentTotal()){
             boolean mergeSuccess = segmentFileService.mergeSegment(key);
             if(mergeSuccess) {

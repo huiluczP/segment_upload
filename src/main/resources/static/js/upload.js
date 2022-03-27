@@ -8,7 +8,7 @@ var segmentSize = 2 * 1024 * 1024;  // 先2MB用着
 
 // 文件key计算
 function calFileKey(file){
-    //把视频的信息存储为一个字符串
+    //把文件的信息存储为一个字符串
     var filedetails= file.name + file.size + file.type + file.lastModifiedDate;
     //使用当前文件的信息用md5加密生成一个key
     var key = hex_md5(filedetails);
