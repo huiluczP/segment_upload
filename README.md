@@ -12,6 +12,6 @@ Springboot框架下实现文件分片上传功能，实现断点续传和秒传�
 持久化框架使用MyBatis，表创建文件已上传。</br>
 
 项目说明:</br>
-[Springboot实现文件分片断点续传功能（后端篇）]()</br>
-[Springboot实现文件分片断点续传功能（前端篇）]()</br>
+[Springboot实现文件分片断点续传功能（后端篇）](https://blog.csdn.net/qq_41733192/article/details/123782427)</br>
+[Springboot实现文件分片断点续传功能（前端篇）](https://blog.csdn.net/qq_41733192/article/details/123783292)</br>
 
