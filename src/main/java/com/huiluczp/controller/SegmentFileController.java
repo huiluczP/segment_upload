@@ -47,7 +47,7 @@ public class SegmentFileController {
     // 之后对segmentIndex分别处理，存储分片文件（文件分片前端完成）
     // 简化情况，认为前端都是异步请求，并且分片是按顺序请求的，只有前面的index处理了才能处理后面的分片（在前端体现）
     // 这样当segmentIndex和总count相同时，获取结果
-    public ReturnResult upLoadSegmentFile(MultipartFile file, String originFileName, Integer fileSize, Integer segmentIndex, Integer segmentSize, String key) throws JsonProcessingException, InterruptedException {
+    public ReturnResult upLoadSegmentFile(MultipartFile file, String originFileName, Integer fileSize, Integer segmentIndex, Integer segmentSize, String key) throws JsonProcessingException{
         System.out.println("文件 " + originFileName + " 开始");
         // 查找是否存在，不存在就写入
         SegmentFile segmentFile = segmentFileService.checkSegmentFile(key);
@@ -72,14 +72,23 @@ public class SegmentFileController {
             return new ReturnResult(false, "文件数据库记录更新失败");
 
         // 判断是否分片齐全，齐全则合并生成究极文件
-        // 其实考虑这步会不会失败应该在数据库再加一个值，不过这边省略了
+        // 其实考虑这步会不会失败应该在数据库再加一个值，再说吧
+        class deleteThread implements Runnable{
+            @Override
+            public void run() {
+                try {
+                    segmentFileService.deleteSegments(key);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         if(segmentIndex==segmentFile.getSegmentTotal()){
             boolean mergeSuccess = segmentFileService.mergeSegment(key);
             if(mergeSuccess) {
-                // 为了保证不被占用，先回收数据流对象
-                System.gc();
-                Thread.sleep(1000);
-                segmentFileService.deleteSegments(key);
+                // 另开线程去自旋删除
+                new Thread(new deleteThread()).start();
                 return new ReturnResult(true, mapper.writeValueAsString(segmentFile));
             }
             else

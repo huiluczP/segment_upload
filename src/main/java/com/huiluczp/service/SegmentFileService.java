@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 // 分片存储
@@ -113,15 +114,43 @@ public class SegmentFileService {
     }
 
     // 完成合并，删除分片文件
-    // 其实最好是用定时器方法写个单独线程来删除，不过这样要判断每个分片，懒得写了
-    public void deleteSegments(String key){
+    public void deleteSegments(String key) throws InterruptedException {
+        // 为了保证不被占用，先回收数据流对象
+        System.gc();
+        Thread.sleep(1000);
         SegmentFile segmentFile = segmentFileMapper.getSegmentFileByKey(key).get(0);
         int segmentCount = segmentFile.getSegmentTotal();
+        ArrayList<String> remain = new ArrayList<>();
+        int finished = 0;
+        int[] visited = new int[segmentCount];
         for (int i = 0; i < segmentCount; i++) {
             String segmentFilePath = FileUtil.getSegmentName(segmentFile.getFilePath(), i + 1);
+            remain.add(segmentFilePath);
             File file = new File(segmentFilePath);
             boolean result = file.delete();
+            if(result) {
+                finished++;
+                visited[i] = 1;
+            }
             System.out.println("分片文件:" + segmentFilePath + "删除" + (result?"成功":"失败"));
+        }
+        // visited数组，然后完成了再去除，知道count到达总数
+        while(finished<segmentCount){
+            System.gc();
+            Thread.sleep(1000);
+            for(int i=0;i<segmentCount;i++){
+                if(visited[i]==0){
+                    String segmentFilePath = FileUtil.getSegmentName(segmentFile.getFilePath(), i + 1);
+                    remain.add(segmentFilePath);
+                    File file = new File(segmentFilePath);
+                    boolean result = file.delete();
+                    if(result){
+                        visited[i] = 1;
+                        finished++;
+                    }
+                    System.out.println("分片文件:" + segmentFilePath + "删除" + (result?"成功":"失败"));
+                }
+            }
         }
     }
 
