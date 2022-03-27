@@ -55,11 +55,14 @@ function checkFile(){
         success:function(data){
             var result = data.success
             if(!result){
+                $('#uuid').html('uuid_name:')
                 $('#output').html('该文件未上传')
             }else{
                 var segmentFile = JSON.parse(data.message)
                 var segmentIndexNow = segmentFile.segmentIndex
                 var segmentTotal = segmentFile.segmentTotal
+                var uuid = segmentFile.fileName
+                $('#uuid').html('uuid_name: ' + uuid)
                 if(segmentIndexNow==segmentTotal){
                     // 完成上传
                     $('#output').html('该文件已完成上传，别再传了')
@@ -96,6 +99,7 @@ function upload(){
             if(!result){
                 var segmentIndexNow = 0
                 var segmentTotal = calTotalSegmentSize(file)
+                $('#uuid').html('uuid_name:')
                 $('#output').html(segmentIndexNow + '/' +segmentTotal)
                 var segmentIndex = segmentIndexNow + 1
                 // 开始上传分片
